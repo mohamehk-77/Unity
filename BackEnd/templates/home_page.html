@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="A social platform to share your thoughts"
+    />
+    <title>Home Page</title>
+    <link rel="stylesheet" type="text/css" href="../static/style/home.css" />
+  </head>
+  <body>
+    <header>
+      <nav>
+        <h1>Make Your Post Here</h1>
+      </nav>
+    </header>
+
+    <main class="container">
+      <section id="user-input">
+        <form id="post-form">
+          <textarea
+            id="post-content"
+            placeholder="Write your post here..."
+            required
+          ></textarea>
+          <button type="submit">Post</button>
+        </form>
+      </section>
+
+      <section id="posts">
+        <article class="post">
+          <header class="user-info">
+            <h2 class="username">John Doe</h2>
+            <button class="follow-btn">Follow</button>
+          </header>
+          <p class="post-content">
+            This is a sample post. Lorem ipsum dolor sit amet, consectetur
+            adipiscing elit.
+          </p>
+          <footer>
+            <button class="like-btn">Like</button>
+            <button class="comment-btn">Comments</button>
+          </footer>
+        </article>
+      </section>
+    </main>
+
+    <footer>
+      <p>© 2024 Social Platform</p>
+    </footer>
+  </body>
+</html>
