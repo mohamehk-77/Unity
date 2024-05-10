@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles/index.css">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v2.1.6/css/unicons.css">
+    <link rel="icon" type="image/x-icon" href="./images/logo for l 7s2.jpg">
+    <title>UnityWeb</title>
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <h2 class="logo">
+                UnityWeb
+            </h2>
+            <div class="search-box">
+                <i class="uil uil-search"></i>
+                <input name="userSearch" type="search" placeholder="Search For Users">
+            </div>
+            <div class="Logout">
+                <label class="button button-pri" for="Logout">Logout</label>
+                <script>
+                    var logoutElement = document.querySelector('.Logout');
+                    
+                    logoutElement.addEventListener('click', function() {
+                        window.location.href = '../BackEnd/templates/login_Page.html';
+                    });
+                </script>
+                <div class="profilePic">
+                    <img src="./images/369526677_2527570767419676_1453225281164553236_n.jpg">
+                </div>
+            </div>
+        </div>
+    </nav>
+    <main>
+        <div class="container">
+            <div class="Left">
+                <a class="profile">
+                    <div class="profilePic">
+                        <img src="./images/369526677_2527570767419676_1453225281164553236_n.jpg">
+                    </div>
+                    <div class="handle">
+                        <h4>Hossam</h4>
+                        <p class="text-Muted">
+                            @hos
+                        </p>
+                    </div>
+                </a>
+                <div class="SideBar">
+                    <a class="MenuItems ACT">
+                        <span><i class="uil uil-home"></i></span><h3>Home</h3>
+                    </a>
+                    <a class="MenuItems" id="Noti">
+                        <span><i class="uil uil-bell"><small class="NotiCount">6</small></i></span><h3>Notifications</h3>
+                        <div class="NotiPopup">
+                            <div class="profilePic">
+                                <img src="./images/369526677_2527570767419676_1453225281164553236_n.jpg">
+                            </div>
+                            <b>3mar</b> Accepted your follow request
+                        </div>
+                        <div class="NotiBody">
+                        </div>
+                    </a>
+                    <a class="MenuItems" id="MessagesNoti">
+                        <span><i class="uil uil-envelope-alt"><small class="NotiCount">+6</small></i></span><h3>Messages</h3>
+                    </a>
+                    <a class="MenuItems">
+                        <span><i class="uil uil-bookmark"></i></span><h3>Bookmarks</h3>
+                    </a>
+                    <a class="MenuItems" id ="Thme">
+                        <span><i class="uil uil-palette"></i></span><h3>Theme</h3>
+                    </a>
+                    <a class="MenuItems">
+                        <span><i class="uil uil-setting"></i></span><h3>Settings</h3>
+                    </a>
+                </div>
+                <label for="CreatePost" class="button button-pri">Create Post</label>
+            </div> 
+            <div class="Mid">
+                <div class="Stories">
+                    <div class="Story">
+                        <div class="profilePic">
+                            <img src="./images/369526677_2527570767419676_1453225281164553236_n.jpg">
+                    </div>
+                    <p class="Name">Your Story</p>
+                </div>
+                <div class="Story">
+                    <div class="profilePic">
+                        <img src="./images/369526677_2527570767419676_1453225281164553236_n.jpg">
+                </div>
+                <p class="Name">Your Story</p>
+            </div>
+            <div class="Story">
+                <div class="profilePic">
+                    <img src="./images/369526677_2527570767419676_1453225281164553236_n.jpg">
+            </div>
+            <p class="Name">Your Story</p>
+        </div>
+        <div class="Story">
+            <div class="profilePic">
+                <img src="./images/369526677_2527570767419676_1453225281164553236_n.jpg">
+        </div>
+        <p class="Name">Your Story</p>
+    </div>
+            </div>
+            <form class="CreatePost">
+                <div class="profilePic">
+                    <img src="./images/369526677_2527570767419676_1453225281164553236_n.jpg">
+                </div>
+                <input type="text" placeholder="What's on your mind?" id="create-post">
+                <input type="submit" value="Post" class="button button-pri"> 
+            </form>
+            <div class="Posts">
+            <div class="Post">
+                <div class="Head">
+                    <div class="User">
+                        <div class="profilePic">
+                            <img src="./images/369526677_2527570767419676_1453225281164553236_n.jpg">
+                        </div>
+                        <div class="userinfo">
+                            <div class="ing">
+                                <h3>Hos</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <span class="Edit">
+                        <i class="uil uil-ellipsis-h"></i>
+                    </span>
+                </div>
+                <div class="PostImage">
+                    <img src="./images/369526677_2527570767419676_1453225281164553236_n.jpg">
+                </div>
+                
+                <div class="ActButtons">
+                    <div class="InteractionButtons">
+                        <span><i class="uil uil-heart"></i></span>
+                        <span><i class="uil uil-comment"></i></span>
+                        <span><i class="uil uil-share"></i></span>
+                    </div>
+                    <div class="BookMark">
+                        <span><i class="uil uil-bookmark"></i></span>
+                    </div>
+                </div>
+                <div class="Liked_By">
+                    <span><img src="./images/369526677_2527570767419676_1453225281164553236_n.jpg"></span>
+                    <span><img src="./images/369526677_2527570767419676_1453225281164553236_n.jpg"></span>
+                    <span><img src="./images/369526677_2527570767419676_1453225281164553236_n.jpg"></span>
+                    <p> Liked By <b>UserName </b> and <b>UserName</b></p>
+                </div>
+                <div class="caption">
+                    <p><b>LeoMissie</b> Lorem ipsum dolor sit amet consectetur adipisicing elit. Magni illum iste facilis earum consequatur quibusdam in doloribus iusto sapiente. Soluta laudantium quod eveniet ullam quam odio repudiandae, labore unde voluptate?</p>
+                </div>
+                <div class="Comments text-muted"></div>
+                    </div>
+            </div>
+        </div>
+        <div class="Right">
+            <div class="Messages" id="MessagesHightlight">
+                <div class="Heading">
+                    <h4>Messages</h4><i class="uil uil-edit"></i>
+                </div>
+                <div class="search-box">
+                    <i class="uil uil-search"></i>
+                    <input type="search" placeholder="Search By Message" id="MessageSearch">
+                </div>
+                <div class="Category">
+                    <h6 class="ACT"> Primary</h6>
+                    <h6>General</h6>
+                    <h6 class="MessageRequest">Request(7)</h6>
+                </div>
+                <div class="Message">
+                    <div class="profilePic">
+                        <img src="./images/369526677_2527570767419676_1453225281164553236_n.jpg">
+                        <div class="ACT"></div>
+                    </div>
+                    <div class="MessageBody">
+                        <h5>UserName</h5>
+                        <p class="TextBold">Meo Meow Nigga</p>
+                    </div>
+                </div>
+                <div class="Message">
+                    <div class="profilePic">
+                        <img src="./images/369526677_2527570767419676_1453225281164553236_n.jpg">
+                        <div class="ACT"></div>
+                    </div>
+                    <div class="MessageBody">
+                        <h5>UserName</h5>
+                        <p class="TextBold">Meo Meow Nigga</p>
+                    </div>
+                </div>
+                <div class="Message">
+                    <div class="profilePic">
+                        <img src="./images/369526677_2527570767419676_1453225281164553236_n.jpg">
+                        <div class="ACT"></div>
+                    </div>
+                    <div class="MessageBody">
+                        <h5>UserName</h5>
+                        <p class="TextBold">Meo Meow Nigga</p>
+                    </div>
+                </div>
+                <div class="Message">
+                    <div class="profilePic">
+                        <img src="./images/369526677_2527570767419676_1453225281164553236_n.jpg">
+                        <div class="ACT"></div>
+                    </div>
+                    <div class="MessageBody">
+                        <h5>Adam</h5>
+                        <p class="TextBold">Meo Meow Nigga</p>
+                    </div>
+                </div>
+            </div>
+                <div class="FriendsRequests">
+                    <h4>Requests</h4>
+                    <div Class="Request">
+                        <div class="Info">
+                            <div class="profilePic">
+                                <img src="./images/369526677_2527570767419676_1453225281164553236_n.jpg">
+                        </div>
+                        <div>
+                        <h5>Meow Meow Meow</h5>
+                        <p class="TextMute">
+                            8 mutualFriend
+                        </p>
+                    </div>
+                    </div>
+                    <div class="action">
+                        <button class="button button-pri">Accept </button>
+                        <button class="button">Decline </button>
+                </div>
+                </div>
+                <div Class="Request">
+                    <div class="Info">
+                        <div class="profilePic">
+                            <img src="./images/369526677_2527570767419676_1453225281164553236_n.jpg">
+                    </div>
+                    <div>
+                    <h5>Meow Meow Meow</h5>
+                    <p class="text-muted">
+                        8 mutualFriend
+                    </p>
+                </div>
+                </div>
+                <div class="action">
+                    <button class="button button-pri">Accept </button>
+                    <button class="button">Decline </button>
+            </div>
+            </div>
+        </div>
+    </div>
+    </main>
+    <div class="Theme">
+        <div class="Card">
+            <h2> Customize Your View</h2>
+            <p class="text-muted"> Manage Your Font Size, And Background</p>
+            <div class="FontSize">
+                <h4>Font Size</h4>
+            <div>
+            <h6> Aa </h6>
+            <div class="ChooseSize">
+                <span class="FontSize1"></span>
+                <span class="FontSize2 ACT"></span>
+                <span class="FontSize3"></span>
+                <span class="FontSize4"></span>
+                <span class="FontSize5"></span>
+            </div>
+            <h3>Aa</h3>
+            </div>
+        </div>
+        <div class="Color">
+            <h4>Color</h4>
+            <div class="ChooseColor">
+                <span class="Color1 ACT"></span>
+                <span class="Color2"></span>
+                <span class="Color3"></span>
+                <span class="Color4"></span>
+                <span class="Color5"></span>
+            </div>
+        </div>
+        <div class="BackGround">
+            <h4>Background</h4>
+                <div class="Choose-BG">
+                    <div class="BG-1 ACT">
+                        <span></span>
+                        <h5 for="BG-1">Light</h5>
+                    </div> 
+                    <div class="BG-2">
+                        <span></span>
+                        <h5>Dim</h5>
+                    </div>
+                    <div class="BG-3">
+                        <span></span>
+                        <h5 for="BG-3">Lights Out</h5>
+                </div>
+                </div>
+        </div>
+        </div>
+    </div>
+    <script src="./scripts/index.js"></script>
+</body>
+</html>

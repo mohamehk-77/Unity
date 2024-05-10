@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign Up Page</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="../static/style/SignIn_Page.css"
+    />
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="../static/image/logo for l 7s2.jpg"
+    />
+  </head>
+  <body>
+    <div class="welcome-message">Welcome to UnityWeb!</div>
+    <div class="container">
+      <h2>Sign Up</h2>
+      <form method="POST" action="/signup">
+        <div class="form-group">
+          <label for="first_name">First Name (required)</label>
+          <input type="text" id="first_name" name="first_name" required />
+          <!-- Add name attribute -->
+        </div>
+        <div class="form-group">
+          <label for="last_name">Last Name (required)</label>
+          <input type="text" id="last_name" name="last_name" required />
+          <!-- Add name attribute -->
+        </div>
+        <div class="form-group">
+          <label for="profile_name">Profile Name (required)</label>
+          <input type="text" id="profile_name" name="profile_name" required />
+        </div>
+        <div class="form-group">
+          <label for="email">Email (required)</label>
+          <input type="email" id="email" name="email" required />
+          <!-- Add name attribute -->
+        </div>
+        <div class="form-group">
+          <label for="password">Password (required)</label>
+          <input type="password" id="password" name="password" required />
+          <!-- Add name attribute -->
+        </div>
+        <div class="form-group">
+          <label for="birthday">Birthday (required)</label>
+          <input type="date" id="birthday" name="birthday" required />
+          <!-- Add name attribute -->
+        </div>
+        <div class="form-group">
+          <label>Gender (required)</label>
+          <input type="radio" id="Male" name="gender" value="Male" required />
+          <label for="Male">Male</label>
+          <!-- 'for' attribute matches 'id' of input -->
+          <input
+            type="radio"
+            id="Female"
+            name="gender"
+            value="Female"
+            required
+          />
+          <label for="Female">Female</label>
+        </div>
+        <div class="form-group">
+          <button type="submit">Sign Up</button>
+          <p>Already have an account? <a href="/./login">Login here</a>.</p>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>
