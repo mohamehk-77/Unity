@@ -28,7 +28,7 @@ class Users(Base):
     Gender = Column("Gender", Enum("Male", "Female"))
     ProfileName = Column("ProfileName", VARCHAR(255))
     Email = Column("Email", VARCHAR(255))
-    PasswordHash = Column("PasswordHash", VARCHAR(128))
+    PasswordHash = Column("PasswordHash", VARCHAR(256))
     Birthday = Column("Birthday", Date)
     avatar_image_id = Column("avatar_image_id", CHAR(36), ForeignKey('images.image_id'), nullable=True)
 
@@ -120,10 +120,10 @@ class Images(Base):
     __tablename__ = "images"
     image_id = Column("image_id", CHAR(36), primary_key=True, default=generate_uuid)
     user_id = Column("user_id", CHAR(36), ForeignKey('users.userID'))
-    image_path = Column("image_path", String)  # New column to store image file path
+    image_path = Column("image_path", VARCHAR(255))  # New column to store image file path
     upload_time = Column("upload_time", TIMESTAMP, default=datetime.utcnow)
-    image_url = Column("image_url", String)
-    
+    image_url = Column("image_url", String(255))  # Adjusted to specify length
+
     def __init__(self, user_id, image_path, image_url=None):
         self.user_id = user_id
         self.image_path = image_path
