@@ -1076,3 +1076,36 @@ main .container .Right{
 #next-button {
     float: right; /* Aligns the button to the right */
 }
+
+ .delete-button {
+    display: none;
+    background-color: red; /* Initially hide the delete button */
+ }
+
+ .feedback-message {
+    color: red;
+    margin: 10px 0;
+    text-align: center;
+}
+
+.Mid .CreatePost .Card {
+    background: var(--col-white);
+    padding: 3rem;
+    border-radius: var(--crd-border-radius);
+    -webkit-border-radius: var(--crd-border-radius);
+    -moz-border-radius: var(--crd-border-radius);
+    -ms-border-radius: var(--crd-border-radius);
+    -o-border-radius: var(--crd-border-radius);
+    width: 50%;
+    height: 50%;
+    box-shadow: 0 0 1rem var(--col-pri);
+    justify-content: space-between;
+    text-align: center;
+
+    /* Add these properties to center the card */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+}

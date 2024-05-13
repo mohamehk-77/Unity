@@ -3,7 +3,7 @@ from flask import Flask, request, jsonify, session, redirect, url_for, render_te
 from api.v1.views import *
 from Create import add_user, check_password_hash, Users, Posts, Comments, Follows, Likes, Notifications, session as db_session, Stories
 import os
-from Create import db, Session, Images, edit_user_email, edit_user_name, edit_user_info
+from Create import db, Session, Images, edit_user_email, edit_user_name, edit_user_info, is_authorized_to_delete_story
 from werkzeug.utils import secure_filename
 import os
 from werkzeug.utils import secure_filename
@@ -54,6 +54,59 @@ app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
 def allowed_file(filename):
     return '.' in filename and \
         filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
+
+
+@app.route('/submit_post', methods=['POST'])
+def submit_post():
+    if 'user_id' not in session:
+        return jsonify({'error': 'User not authenticated'}), 401
+
+    post_content = request.form.get('post_content')
+    image_file = request.files.get('image_file', None)  # Default to None if not provided
+
+    # Check if required data is present
+    if not post_content:
+        return jsonify({'error': 'Post content is missing'}), 400
+
+    # Initialize image_path as None
+    image_path = None
+
+    # If an image file is provided and it's allowed
+    if image_file and allowed_file(image_file.filename):
+        if not is_filename_safe(image_file.filename):
+            return jsonify({'error': 'Filename is not safe. Please rename the file and try again.'}), 400
+        
+        # Check the file size
+        max_file_size = 1024 * 1024 * 5  # 5 MB
+        if image_file.content_length > max_file_size:
+            return jsonify({'error': 'File size exceeds the limit of 5 MB. Please upload a smaller file.'}), 400
+        
+        try:
+            # Save the image file and get the path
+            image_path = save_image_file(image_file)
+            
+            # Calculate the image URL
+            image_url = url_for('static', filename=os.path.join('uploaded_images', image_file.filename))
+            
+            # Create a new image record in the database
+            new_image = Images(user_id=session['user_id'], image_path=image_path, image_url=image_url)
+            db_session.add(new_image)
+            db_session.commit()
+            
+            # Use the ImageID of the new image
+            image_id = new_image.image_id
+        except Exception as e:
+            return jsonify({'error': f'An unexpected error occurred: {str(e)}'}), 500
+
+    try:
+        # Create a new post with or without an ImageID
+        new_post = Posts(UserID=session['user_id'], PostContent=post_content, ImageID=image_id if image_path else None)
+        db_session.add(new_post)
+        db_session.commit()
+        
+        return jsonify({'message': 'Post submitted successfully', 'post_id': new_post.PostID}), 200
+    except Exception as e:
+        return jsonify({'error': f'An unexpected error occurred: {str(e)}'}), 500
 
 
 @app.route('/upload_image', methods=['POST'])
@@ -119,6 +172,35 @@ def submit_story():
         return jsonify({'message': 'Story submitted successfully', 'story_id': new_story.StoryID}), 200
     except Exception as e:
         return jsonify({'error': f'An unexpected error occurred: {str(e)}'}), 500
+
+
+@app.route('/stories/<story_id>', methods=['DELETE'])
+def delete_story(story_id):
+    # Check if the user is authenticated
+    if 'user_id' not in session:
+        return jsonify({'error': 'User not authenticated'}), 401
+    
+    # Get the user ID from the session
+    user_id = session['user_id']
+    
+    
+    if not is_authorized_to_delete_story(user_id, story_id):
+         return jsonify({'error': 'User not authorized to delete this story'}), 403
+
+    try:
+        # Perform the deletion operation
+       story = db_session.query(Stories).filter_by(UserID=user_id, StoryID=story_id).first()
+       if story:
+            db_session.delete(story)
+            db_session.commit()
+
+            return jsonify({'message': 'Story deleted successfully'}), 200
+       else:
+           return jsonify({'error': 'Story not found'}), 404
+    except Exception as e:
+        # Handle any unexpected exceptions
+        return jsonify({'error': f'An unexpected error occurred: {str(e)}'}), 500
+
 
 
 @app.route('/upload', methods=['POST'])
@@ -401,7 +483,7 @@ def home(profile_name):
     if not user:
         flash('User not found')
         return redirect(url_for('login'))
-
+    story = db_session.query(Stories).first()
     # Get the user's avatar image URL or use a default one
     avatar_image_url = url_for('static', filename='image/images.png')  # Default avatar image
     if user.avatar_image_id:
@@ -410,13 +492,14 @@ def home(profile_name):
             avatar_image_url = avatar_image.image_url
     # Get all stories and their images for the user
     stories_with_images = db_session.query(Stories, Images.image_url).outerjoin(Images, Stories.ImagePath == Images.image_id).filter(Stories.UserID == user.userID).all()
-    
+    posts = db_session.query(Posts).all()
     # Construct a list of dictionaries with story content and image URLs
-    stories_data = [{'content': story.StoryContent, 'image_url': image_url if image_url else avatar_image_url} for story, image_url in stories_with_images]
+    stories_data = [{'id': story.StoryID, 'content': story.StoryContent, 'image_url': image_url if image_url else avatar_image_url} for story, image_url in stories_with_images]
+
     total_stories_count = db_session.query(Stories).filter(Stories.UserID == user.userID).count()
     # Render the home page template with the user's information
     total_pages = (total_stories_count + 4) // 5
-    return render_template('HomePage.html', user=user, avatar_image_url=avatar_image_url, stories_data=stories_data, current_page=current_page, total_pages=total_pages)
+    return render_template('HomePage.html', user=user, avatar_image_url=avatar_image_url, stories_data=stories_data, current_page=current_page, total_pages=total_pages, story=story, posts=posts)
 
 
 if __name__ == '__main__':

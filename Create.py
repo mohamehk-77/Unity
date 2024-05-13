@@ -200,6 +200,13 @@ def add_or_remove_like(UserID, PostID):
         print("Like added")
 
 
+def is_authorized_to_delete_story(userID, storyID):
+    story = session.query(Stories).filter_by(UserID=userID, StoryID=storyID).first()
+    if story and story.UserID == userID:
+        return True
+    return False
+
+
 def edit_user_info(user_id, new_first_name, new_last_name, new_email):
     user = session.query(Users).filter_by(userID=user_id).first()
     if user:

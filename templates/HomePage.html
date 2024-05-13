@@ -86,114 +86,211 @@
                 </div>
                 <label for="CreatePost" class="button button-pri">Create Post</label>
             </div> 
+
             <div class="Mid">
+                <div id="form-feedback" class="feedback-message"></div>
                 <div class="Stories" id="storiesContainer">
+                    <!-- Hidden input to store stories data -->
                     <input type="hidden" id="stories_data" value="{{ stories_data|tojson|safe }}">
-                    {% for i in range(current_page*5, (current_page+1)*5) %}
-                    {% if i < stories_data|length %}
-                    <div class="Story" style="background: url('{{ stories_data[i].image_url }}') no-repeat center center/cover;">
-                        <div class="profilePic">
-                            <img src="{{ avatar_image_url }}">
-                        </div>
-                        <p class="Name">{{ stories_data[i].content }}</p>
-                    </div>
-                    {% endif %}
-                    {% endfor %}
+                    <!-- Stories will be added here by JavaScript -->
                 </div>
-                <button class="button button-pri" id="prev-button" {% if current_page == 0 %}disabled{% endif %}>Prev</button>
-                <button class="button button-pri" id="next-button" {% if (current_page+1)*5 >= stories_data|length %}disabled{% endif %}>Next</button>
-            
+                <!-- Navigation buttons -->
+                <button class="button button-pri" id="prev-button" disabled>Prev</button>
+                <button class="button button-pri" id="next-button">Next</button>
+                
                 <!-- Button to add a new story -->
                 <div class="button-container">
                     <button class="add-story-button button button-pri" id="add-story-button" onclick="showCard()">Add Story</button>
                 </div>
-            
+        
                 <!-- Hidden card for adding a new story -->
                 <div class="Card" id="new-story-card" style="display: none;">
                     <form enctype="multipart/form-data" method="post" action="/submit_story" onsubmit="submitStoryForm(); return false;">
-                        <!-- Larger textarea -->
+                        <!-- Textarea for story content -->
                         <textarea id="story-content" placeholder="Write something here..." style="height: 7em; width: 100%;"></textarea>
-            
-                        <!-- Larger drop zone, moved closer to the top -->
+        
+                        <!-- Drop zone for image upload -->
                         <div id="drop-zone" style="width: 450px; height: 225px; border: 2px dashed #ccc; line-height: 225px; text-align: center; margin: 5px auto;">
                             Drag & drop your image here
                         </div>
-            
-                        <!-- File input for users to optionally upload an image -->
+        
+                        <!-- File input for image upload -->
                         <input type="file" id="file-input" accept="image/*" style="display: none;">
                         <button class="button button-pri" type="button" onclick="document.getElementById('file-input').click()">Browse</button>
-            
+        
+                        <!-- Submit button for the form -->
                         <button class="button button-pri" type="button" onclick="submitStoryForm()">Submit</button>
                     </form>
+                    
                 </div>
                 <script>
-                    // Define current_page in the global scope
-                    var current_page = 0;
-                    var total_pages = {{ total_pages }}; // This value is passed from the Flask route
-                    var stories_data = JSON.parse(document.getElementById('stories_data').value);
-                    // Function to update the display of stories
-                    function renderStories() {
-                        // Fetch the stories container
-                        var storiesContainer = document.getElementById('storiesContainer');
-                        // Clear the current stories
+                    // Parse the stories data from the hidden input
+                    let stories_data = {{ stories_data|tojson|safe }};
+                    // Initialize each story's visibility
+                    stories_data.forEach(story => story.visible = true);
+                    let currentSet = 0;
+                    const storiesPerPage = 5;
+                    let totalStories = stories_data.length;
+                    let totalSets = Math.ceil(totalStories / storiesPerPage);
+                
+                    function updateStoriesVisibility() {
+                        // Clear the stories container
+                        const storiesContainer = document.getElementById('storiesContainer');
                         storiesContainer.innerHTML = '';
-                    
-                        // Calculate the start and end indices for the stories to display
-                        var start = current_page * 5;
-                        var end = start + 5;
-                        // Loop through the stories data and append the stories to the container
-                        for (var i = start; i < end && i < stories_data.length; i++) {
-                            var storyDiv = document.createElement('div');
-                            storyDiv.className = 'Story';
-                            storyDiv.style.background = "url('" + stories_data[i].image_url + "') no-repeat center center/cover";
-                            
-                            var profilePicDiv = document.createElement('div');
-                            profilePicDiv.className = 'profilePic';
-                            var img = document.createElement('img');
-                            img.src = '{{ avatar_image_url }}';
-                            profilePicDiv.appendChild(img);
-                            
-                            var nameP = document.createElement('p');
-                            nameP.className = 'Name';
-                            nameP.textContent = stories_data[i].content;
-                            
-                            storyDiv.appendChild(profilePicDiv);
-                            storyDiv.appendChild(nameP);
-                            storiesContainer.appendChild(storyDiv);
+                
+                        // Calculate the range of stories to show
+                        const start = currentSet * storiesPerPage;
+                        const end = Math.min(start + storiesPerPage, stories_data.length); // Ensure we don't go past the end
+                
+                        // Loop through the stories and add them to the container
+                        for (let i = start; i < end; i++) {
+                            if (stories_data[i].visible !== false) { // Check if the story is not hidden
+                                const storyDiv = document.createElement('div');
+                                storyDiv.className = 'Story';
+                                const imageUrl = stories_data[i].image_url || 'defaultImageUrl'; // Replace with your default image URL
+                                storyDiv.style.background = `url('${imageUrl}') no-repeat center center/cover`;
+                        
+                                const profilePicDiv = document.createElement('div');
+                                profilePicDiv.className = 'profilePic';
+                                const img = document.createElement('img');
+                                img.src = "{{ avatar_image_url }}"; // Assuming avatar_image_url is part of stories_data
+                                profilePicDiv.appendChild(img);
+                                storyDiv.appendChild(profilePicDiv);
+                        
+                                const nameP = document.createElement('p');
+                                nameP.className = 'Name';
+                                nameP.textContent = stories_data[i].content;
+                                storyDiv.appendChild(nameP);
+                                storiesContainer.appendChild(storyDiv);
+                        
+                                // Create a delete button for the story
+                                const deleteButton = document.createElement('button');
+                                deleteButton.textContent = 'Delete';
+                                deleteButton.className = 'button button-pri delete-button'; // Add the CSS class
+                                deleteButton.style.zIndex = '999'; // Set a higher z-index value
+                                deleteButton.style.pointerEvents = 'auto'; // Ensure pointer events are enabled
+                                deleteButton.addEventListener('click', function() {
+                                    deleteStory(i - start, stories_data[i].id) // Pass the index and the storyId
+                                    .then(() => {
+                                        window.location.reload(true); // Refresh the page after deleting the story
+                                    });
+                                });
+                                
+                                storyDiv.appendChild(deleteButton);
+                        
+                                // Show delete button on story hover
+                                storyDiv.addEventListener('mouseenter', function() {
+                                    deleteButton.style.display = 'inline-block';
+                                });
+                        
+                                // Hide delete button when not hovered
+                                storyDiv.addEventListener('mouseleave', function() {
+                                    deleteButton.style.display = 'none';
+                                });
+                            }
                         }
-                    
-                        // Update the button states
-                        document.getElementById('prev-button').disabled = current_page === 0;
-                        document.getElementById('next-button').disabled = current_page >= total_pages - 1;
+                        async function deleteStory(index, storyId) {
+                            try {
+                                const deleteResponse = await fetch('/stories/' + storyId, {
+                                    method: 'DELETE',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    }
+                                });
+                                console.log('Delete response:', deleteResponse);
+                                if (!deleteResponse.ok) {
+                                    throw new Error(`Delete failed with status: ${deleteResponse.status}`);
+                                }
+                                console.log('Story deleted successfully, refreshing stories...');
+                                const storiesResponse = await fetch('/api/get-stories');
+                                if (!storiesResponse.ok) {
+                                    throw new Error(`Fetch failed with status: ${storiesResponse.status}`);
+                                }
+                                const data = await storiesResponse.json();
+                                if (!Array.isArray(data)) {
+                                    throw new TypeError('Received data is not an array.');
+                                }
+                                console.log('Raw data received:', data);
+                                // Rest of your code to handle the data...
+                                window.location.reload(true); // Force reload from the server
+                            } catch (error) {
+                                console.error('Error during delete or fetch:', error);
+                            }
+                        }
+                        
+                        
+                        
+                        // Update the state of the navigation buttons
+                        document.getElementById('prev-button').disabled = currentSet === 0;
+                        document.getElementById('next-button').disabled = currentSet >= totalSets - 1;
                     }
-                    
-                    // Event listeners for the Prev and Next buttons
+                
+                    // Event listener for 'prev-button'
                     document.getElementById('prev-button').addEventListener('click', function() {
-                        if (current_page > 0) {
-                            current_page--;
-                            renderStories();
+                        if (currentSet > 0) {
+                            currentSet--;
+                            updateStoriesVisibility();
                         }
                     });
-                    
+                
+                    // Event listener for 'next-button'
                     document.getElementById('next-button').addEventListener('click', function() {
-                        if (current_page < total_pages - 1) {
-                            current_page++;
-                            renderStories();
+                        if (currentSet < totalSets - 1) {
+                            currentSet++;
+                            updateStoriesVisibility();
                         }
                     });
-                    
-                    // Initial call to display the first page of stories
-                    renderStories();
-                    </script>
+                
+                    // Initial call to display stories
+                    updateStoriesVisibility();
+                </script>
+                
+                
                     
                 
-        <form class="CreatePost">
-                <div class="profilePic">
-                    <img src="{{ image_url }}">
-                </div>
-                <input type="text" placeholder="What's on your mind?" id="create-post">
-                <input type="submit" value="Post" class="button button-pri"> 
-            </form>
+        <!-- Form for creating a post -->
+<form class="CreatePost" enctype="multipart/form-data" method="post" action="/submit_post" onsubmit="return submitPostForm();">
+    <div class="profilePic">
+        <img src="{{ image_url }}">
+    </div>
+    <div class="button-container">
+        <!-- Button to show the post card -->
+        <button type="button" class="Post-button button button-pri" id="Post-button" onclick="showPostCard()">Post</button>
+    </div>
+    <!-- Hidden card for adding a new post -->
+    <div class="Card" id="new-post-card" style="display: none;">
+        <!-- Textarea for post content -->
+        <textarea id="post-content" placeholder="Write something here..." style="height: 7em; width: 100%;"></textarea>
+
+        <!-- Drop zone for image upload -->
+        <div id="drop-zone" style="width: 450px; height: 225px; border: 2px dashed #ccc; line-height: 225px; text-align: center; margin: 5px auto;">
+            Drag & drop your image here
+        </div>
+
+        <!-- File input for image upload -->
+        <input type="file" id="file-input" name="image_file" accept="image/*" style="display: none;">
+        <button type="button" class="button button-pri" onclick="document.getElementById('file-input').click()">Browse</button>
+
+        <!-- Submit button for the form -->
+        <button type="submit" class="button button-pri">Submit</button>
+    </div>
+</form>
+
+<script>
+// JavaScript function to show the post card
+function showPostCard() {
+    var card = document.getElementById('new-post-card');
+    card.style.display = 'block';
+}
+
+// JavaScript function to handle the post submission
+function submitPostForm() {
+    // Add your logic for form submission here
+    // ...
+    return true; // Return false to prevent the form from submitting if there are errors
+}
+</script>
+
             <div class="Posts">
             <div class="Post">
                 <div class="Head">
@@ -203,7 +300,7 @@
                         </div>
                         <div class="userinfo">
                             <div class="ing">
-                                <h3>Hos</h3>
+                                <h3>{{  user.ProfileName  }}</h3>
                             </div>
                         </div>
                     </div>
@@ -425,6 +522,11 @@
 </form>
 <script>
     var userID = '{{ user.userID }}';
+{% for story in stories_data %}
+    var storyID = '{{ story.id }}';
+    console.log(storyID);
+{% endfor %}
+
 </script>
     <script src="/static/script/home.js"></script>
     <script src="/static/script/pic.js"></script>

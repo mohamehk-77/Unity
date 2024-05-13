@@ -431,10 +431,9 @@ function submitStoryForm() {
     let formData = new FormData();
     formData.append('story_content', storyContent);
     if (imageFile) {
-        formData.append('image_file', imageFile); // Make sure this key matches the server expectation
+        formData.append('image_file', imageFile);
     }
 
-    // Log FormData contents
     for (let [key, value] of formData.entries()) {
         console.log(key, value);
     }
@@ -447,11 +446,19 @@ function submitStoryForm() {
     .then(data => {
         if (data.error) {
             console.error('Error uploading story:', data.error);
+            document.getElementById('form-feedback').textContent = 'Error: ' + data.error;
         } else {
             console.log('Story uploaded successfully', data);
+            document.getElementById('form-feedback').textContent = 'Story uploaded successfully!';
+            document.getElementById('story-content').value = '';
+            document.getElementById('file-input').value = '';
+            console.log('Attempting to reload the page...');
+            window.location.reload(true);
         }
     })
     .catch(error => {
         console.error('Error uploading story:', error);
+        document.getElementById('form-feedback').textContent = 'Error: ' + error.message;
     });
 }
+
